@@ -1,5 +1,5 @@
 const router = require("express").Router();
-
+const auth = require("../auth/journalistArea");
 const Journalist = require("../models/Journalist");
 
 router.post("/signup-journalist", async (req, res) => {
@@ -29,6 +29,19 @@ router.post("/login-journalist", async (req, res) => {
 		if (!Object.keys(err).length)
 			return res.status(500).send({ msg: "Email or password doesn't match" });
 
+		res.status(500).send(err);
+	}
+});
+
+router.post("/logout-journalist", auth, async (req, res) => {
+	try {
+		req.journalist.tokens = req.journalist.tokens.filter(({ token }) => {
+			return token !== req.token;
+		});
+
+		await req.journalist.save();
+		res.send({ message: "Logout Success" });
+	} catch (err) {
 		res.status(500).send(err);
 	}
 });
