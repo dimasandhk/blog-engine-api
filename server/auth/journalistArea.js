@@ -6,14 +6,14 @@ const auth = async (req, res, next) => {
 	try {
 		const { journalistToken } = req.cookies;
 		if (!journalistToken) throw new Error();
-		const decodedObject = jwt.verify(journalistToken, process.env.JWT_JOURNALIST);
 
+		const decodedObject = jwt.verify(journalistToken, process.env.JWT_JOURNALIST);
 		const journalist = await Journalist.findOne({
 			_id: decodedObject._id,
 			"tokens.token": journalistToken
 		});
-		if (!journalist) throw new Error();
 
+		if (!journalist) throw new Error();
 		req.token = journalistToken;
 		req.journalist = journalist;
 		next();

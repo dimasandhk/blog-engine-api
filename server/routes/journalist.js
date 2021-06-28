@@ -51,9 +51,10 @@ router.post("/journalist/logout", auth, async (req, res) => {
 });
 
 router.post("/journalist/profile-verify", async (req, res) => {
-	const { journalistToken } = req.cookies;
-
 	try {
+		const { journalistToken } = req.cookies;
+		if (!journalistToken) throw new Error();
+
 		const decoded = jwt.verify(journalistToken, process.env.JWT_JOURNALIST);
 		const journalist = await Journalist.findOne({
 			_id: decoded._id,
@@ -63,7 +64,7 @@ router.post("/journalist/profile-verify", async (req, res) => {
 
 		res.send(journalist);
 	} catch (err) {
-		if (!Object.keys(err).length) return res.status(401).send({ msg: "Not a journalist" });
+		if (!Object.keys(err).length) return res.status(401).send({ msg: "Json Web Token Required" });
 		res.status(401).send(err);
 	}
 });
