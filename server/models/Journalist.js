@@ -6,6 +6,11 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const journalistSchema = new mongoose.Schema({
+	name: {
+		type: String,
+		trim: true,
+		required: true
+	},
 	email: {
 		type: String,
 		unique: true,
@@ -42,7 +47,7 @@ journalistSchema.methods.toJSON = function () {
 
 journalistSchema.methods.generateToken = async function () {
 	const user = this;
-	const token = jwt.sign({ _id: user._id.toString() }, process.env.JWTSECRET);
+	const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_JOURNALIST);
 
 	user.tokens.push({ token });
 	await user.save();
@@ -50,14 +55,14 @@ journalistSchema.methods.generateToken = async function () {
 	return token;
 };
 
-journalistSchema.statics.loginAuth = async (email, password) => {
-	const user = await User.findOne({ email });
-	if (!user) throw new Error({ error: "Email or password doesn't match" });
+journalistSchema.statics.login = async (email, password) => {
+	const journalist = await Journalist.findOne({ email });
+	if (!journalist) throw new Error({ error: "Email or password doesn't match" });
 
-	const isMatch = await bcrypt.compare(password, user.password);
+	const isMatch = await bcrypt.compare(password, journalist.password);
 	if (!isMatch) throw new Error({ error: "Email or password doesn't match" });
 
-	return user;
+	return journalist;
 };
 
 journalistSchema.pre("save", async function (next) {
