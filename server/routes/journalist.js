@@ -2,7 +2,10 @@ const router = require("express").Router();
 const auth = require("../auth/journalistArea");
 const Journalist = require("../models/Journalist");
 
-router.post("/signup-journalist", async (req, res) => {
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+router.post("/journalist/signup", async (req, res) => {
 	const newJournalist = new Journalist(req.body);
 
 	try {
@@ -16,7 +19,7 @@ router.post("/signup-journalist", async (req, res) => {
 	}
 });
 
-router.post("/login-journalist", async (req, res) => {
+router.post("/journalist/login", async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
@@ -33,16 +36,35 @@ router.post("/login-journalist", async (req, res) => {
 	}
 });
 
-router.post("/logout-journalist", auth, async (req, res) => {
+router.post("/journalist/logout", auth, async (req, res) => {
 	try {
 		req.journalist.tokens = req.journalist.tokens.filter(({ token }) => {
 			return token !== req.token;
 		});
 
 		await req.journalist.save();
+		res.clearCookie("journalistToken");
 		res.send({ message: "Logout Success" });
 	} catch (err) {
 		res.status(500).send(err);
+	}
+});
+
+router.post("/journalist/profile-verify", async (req, res) => {
+	const { journalistToken } = req.cookies;
+
+	try {
+		const decoded = jwt.verify(journalistToken, process.env.JWT_JOURNALIST);
+		const journalist = await Journalist.findOne({
+			_id: decoded._id,
+			"tokens.token": journalistToken
+		});
+		if (!journalist) throw new Error();
+
+		res.send(journalist);
+	} catch (err) {
+		if (!Object.keys(err).length) return res.status(401).send({ msg: "Not a journalist" });
+		res.status(401).send(err);
 	}
 });
 
