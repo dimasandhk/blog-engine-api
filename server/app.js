@@ -11,5 +11,6 @@ app.use(express.json());
 
 app.use("/api", require("./routes/journalist"));
 app.use("/api", require("./routes/blog"));
+app.use("/api", require("./routes/guest"));
 
 app.listen(port, () => console.log(`Up on port ${port}`));

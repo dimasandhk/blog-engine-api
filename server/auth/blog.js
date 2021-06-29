@@ -17,6 +17,7 @@ const auth = async (req, res, next) => {
 		if (!journalist) throw new Error();
 		delete journalist.tokens;
 		req.id = journalist._id;
+		req.journalist = journalist;
 		next();
 	} catch (err) {
 		res.status(401).send({ msg: "Please Authenticate" });
