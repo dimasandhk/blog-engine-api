@@ -12,12 +12,20 @@ router.get("/blogs", async (req, res) => {
 router.get("/blog", async (req, res) => {
 	try {
 		const { id } = req.query;
-		if (!id) throw new Error("Id must be provided");
+		if (!id) throw { msg: "Id Must be provided", code: 400 };
 
-		res.send(await Blog.findOne({ _id: id }));
+		const selectedBlog = await Blog.findOne({ _id: id });
+		if (!selectedBlog) throw { msg: "Blog not found", code: 404 };
+		res.send(selectedBlog);
 	} catch (err) {
-		res.status(500).send(err);
+		const { code, msg } = err;
+		res.status(code).send({ msg });
 	}
+});
+
+router.get("/journalist/blog", async (req, res) => {
+	try {
+	} catch (err) {}
 });
 
 module.exports = router;
