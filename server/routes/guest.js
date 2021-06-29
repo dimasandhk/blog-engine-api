@@ -37,4 +37,24 @@ router.get("/journalist/blog", async (req, res) => {
 	}
 });
 
+router.post("/comment-blog", async (req, res) => {
+	try {
+		const { id } = req.query;
+		if (!id) throw { msg: "Id Must be provided", code: 400 };
+
+		const selected = await Blog.findOne({ _id: id });
+		if (!selected) throw { msg: "Blog not found", code: 404 };
+
+		const { name, desc } = req.body;
+		if (!name || !desc) throw { msg: "Name and description must be provided", code: 401 };
+
+		selected.comments.push({ name, desc });
+		await selected.save();
+
+		res.send(selected.comments);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+});
+
 module.exports = router;
