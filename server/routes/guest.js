@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Blog = require("../models/Blog");
+const getProfile = require("./handler/getProfile");
 
 router.get("/blogs", async (req, res) => {
 	try {
@@ -48,7 +49,7 @@ router.post("/comment-blog", async (req, res) => {
 		const { name, desc } = req.body;
 		if (!name || !desc) throw { msg: "Name and description must be provided", code: 401 };
 
-		selected.comments.push({ name, desc });
+		selected.comments.push({ name, desc, profile: getProfile(name) });
 		await selected.save();
 
 		res.send(selected.comments);
@@ -62,7 +63,15 @@ router.get("/oldest-blog", async (req, res) => {
 		const { page } = req.query;
 		if (!page) throw { msg: "Page query must be provided", code: 400 };
 
-		const response = await Blog.paginate({}, { page, limit: 10, sort: { createdAt: "asc" } });
+		const response = await Blog.paginate(
+			{},
+			{
+				page,
+				limit: 10,
+				sort: { createdAt: "asc" },
+				select: "creator creatorId title desc createdAt updatedAt"
+			}
+		);
 		if (!response.docs.length) return res.status(404).send(response);
 
 		res.send(response);
@@ -76,7 +85,15 @@ router.get("/latest-blog", async (req, res) => {
 		const { page } = req.query;
 		if (!page) throw { msg: "Page query must be provided", code: 400 };
 
-		const response = await Blog.paginate({}, { page, limit: 10, sort: { createdAt: "desc" } });
+		const response = await Blog.paginate(
+			{},
+			{
+				page,
+				limit: 10,
+				sort: { createdAt: "desc" },
+				select: "creator creatorId title desc createdAt updatedAt"
+			}
+		);
 		if (!response.docs.length) return res.status(404).send(response);
 
 		res.send(response);

@@ -26,7 +26,7 @@ const blogSchema = new mongoose.Schema(
 			required: true
 		},
 		creatorId: {
-			type: String,
+			type: mongoose.Schema.Types.ObjectId,
 			required: true
 		},
 		comments: [
@@ -36,6 +36,10 @@ const blogSchema = new mongoose.Schema(
 					required: true
 				},
 				desc: {
+					type: String,
+					required: true
+				},
+				profile: {
 					type: String,
 					required: true
 				}
