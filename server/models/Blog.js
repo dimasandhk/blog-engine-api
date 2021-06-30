@@ -29,6 +29,12 @@ const blogSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			required: true
 		},
+		tags: [
+			{
+				type: String,
+				required: true
+			}
+		],
 		comments: [
 			{
 				name: {

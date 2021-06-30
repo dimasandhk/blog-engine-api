@@ -4,7 +4,7 @@ const getProfile = require("./handler/getProfile");
 
 router.get("/blogs", async (req, res) => {
 	try {
-		res.send(await Blog.find({}, "title desc creator creatorId createdAt"));
+		res.send(await Blog.find({}, "title desc creator creatorId createdAt tags"));
 	} catch (err) {
 		res.status(500).send(err);
 	}
@@ -69,7 +69,7 @@ router.get("/oldest-blog", async (req, res) => {
 				page,
 				limit: 10,
 				sort: { createdAt: "asc" },
-				select: "creator creatorId title desc createdAt updatedAt"
+				select: "creator creatorId title desc createdAt updatedAt tags"
 			}
 		);
 		if (!response.docs.length) return res.status(404).send(response);
@@ -91,7 +91,7 @@ router.get("/latest-blog", async (req, res) => {
 				page,
 				limit: 10,
 				sort: { createdAt: "desc" },
-				select: "creator creatorId title desc createdAt updatedAt"
+				select: "creator creatorId title desc createdAt updatedAt tags"
 			}
 		);
 		if (!response.docs.length) return res.status(404).send(response);
