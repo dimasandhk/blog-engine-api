@@ -3,10 +3,11 @@ const auth = require("../auth/journalistArea");
 const Journalist = require("../models/Journalist");
 
 const jwt = require("jsonwebtoken");
+const getProfile = require("./handler/getProfile");
 require("dotenv").config();
 
 router.post("/journalist/signup", async (req, res) => {
-	const newJournalist = new Journalist(req.body);
+	const newJournalist = new Journalist({ ...req.body, profile: getProfile(req.body.email) });
 
 	try {
 		const savedJournalist = await newJournalist.save();

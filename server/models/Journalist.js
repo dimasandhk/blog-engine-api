@@ -25,6 +25,10 @@ const journalistSchema = new mongoose.Schema({
 		minlength: 8,
 		trim: true
 	},
+	profile: {
+		type: String,
+		required: true
+	},
 	tokens: [
 		{
 			token: {

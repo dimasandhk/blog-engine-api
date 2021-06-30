@@ -57,4 +57,32 @@ router.post("/comment-blog", async (req, res) => {
 	}
 });
 
+router.get("/oldest-blog", async (req, res) => {
+	try {
+		const { page } = req.query;
+		if (!page) throw { msg: "Page query must be provided", code: 400 };
+
+		const response = await Blog.paginate({}, { page, limit: 10, sort: { createdAt: "asc" } });
+		if (!response.docs.length) return res.status(404).send(response);
+
+		res.send(response);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+});
+
+router.get("/latest-blog", async (req, res) => {
+	try {
+		const { page } = req.query;
+		if (!page) throw { msg: "Page query must be provided", code: 400 };
+
+		const response = await Blog.paginate({}, { page, limit: 10, sort: { createdAt: "desc" } });
+		if (!response.docs.length) return res.status(404).send(response);
+
+		res.send(response);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+});
+
 module.exports = router;
