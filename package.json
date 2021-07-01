@@ -4,7 +4,9 @@
 	"description": "Simple Blog Engine App",
 	"main": "index.js",
 	"scripts": {
-		"server": "nodemon server/app --ignore client/"
+		"start": "node server/app",
+		"server": "nodemon server/app --ignore client/",
+		"client": "cd client && npm run serve"
 	},
 	"keywords": [],
 	"author": "Dimas Andhika Diputra",
