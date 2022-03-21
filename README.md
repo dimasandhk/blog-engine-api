@@ -1,3 +1,9 @@
 # Blog Engine API
+Simple CMS Blog Engine System made with Express, Mongoose, etc
 
-Will be implemented in frontend really soon
+# Setup & Installation
+```
+npm install
+npm run server // -> debug
+npm run start // -> prod
+```
